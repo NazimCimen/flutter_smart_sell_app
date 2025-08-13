@@ -18,6 +18,7 @@ class CustomButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
+      height: context.cXLargeValue * 1.8,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryColor,
@@ -28,10 +29,12 @@ class CustomButtonWidget extends StatelessWidget {
         ),
         onPressed: onPressed,
         child: isRequestAvaliable
-            ? const CircularProgressIndicator.adaptive(
-                backgroundColor: AppColors.white,
-                valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
-              )
+            ? const Center(
+              child: CircularProgressIndicator.adaptive(               
+                  backgroundColor: AppColors.white,
+                  valueColor: AlwaysStoppedAnimation(AppColors.primaryColor),
+                ),
+            )
             : Text(
                 text,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(

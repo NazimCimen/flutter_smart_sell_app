@@ -9,13 +9,15 @@ mixin SignupMixin on State<SignupView> {
   late final TextEditingController _phoneController;
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
-  bool obscure = true;
+  late final ValueNotifier<bool> _obscureVN;
 
   GlobalKey<FormState> get formKey => _formKey;
   TextEditingController get fullNameController => _fullNameController;
   TextEditingController get phoneController => _phoneController;
   TextEditingController get emailController => _emailController;
   TextEditingController get passwordController => _passwordController;
+  ValueNotifier<bool> get obscureListenable => _obscureVN;
+  bool get obscure => _obscureVN.value;
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ mixin SignupMixin on State<SignupView> {
     _phoneController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _obscureVN = ValueNotifier<bool>(true);
     super.initState();
   }
 
@@ -33,22 +36,23 @@ mixin SignupMixin on State<SignupView> {
     _phoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _obscureVN.dispose();
     super.dispose();
   }
 
-  Future<void> _onSignupButtonPressed() async {
-    await context.read<AuthCubit>().signup(
-      fullName: fullNameController.text.trim(),
-      phone: phoneController.text.trim(),
-      email: emailController.text.trim(),
-      password: passwordController.text,
-    );
+  Future<void> signUp(BuildContext context) async {
+    if (_validateForm()) {
+      await context.read<AuthCubit>().signup(
+        fullName: fullNameController.text.trim(),
+        phone: phoneController.text.trim(),
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+    }
   }
 
-  Future<void> validateForm() async {
-    if (formKey.currentState?.validate() ?? false) {
-      await _onSignupButtonPressed();
-    }
+  bool _validateForm() {
+    return formKey.currentState?.validate() ?? false;
   }
 
   Future<void> onTapGoogle() async {}
@@ -56,4 +60,8 @@ mixin SignupMixin on State<SignupView> {
   Future<void> onTapApple() async {}
 
   Future<void> onTapFacebook() async {}
+
+  void changeObsecureText() {
+    _obscureVN.value = !_obscureVN.value;
+  }
 }

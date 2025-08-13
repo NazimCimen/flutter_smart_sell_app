@@ -16,3 +16,4 @@ analyzer:
     public_member_api_docs: ignore
     sort_constructors_first: ignore
     unnecessary_lambdas: ignore
+    invalid_annotation_target: ignore

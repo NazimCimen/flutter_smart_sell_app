@@ -19,13 +19,13 @@ class Footer extends StatelessWidget {
         text: text,
         style: Theme.of(
           context,
-        ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w400),
+        ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w400),
         children: [
           TextSpan(
             text: linkText,
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+            ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
             recognizer: TapGestureRecognizer()
               ..onTap = () {
                 onTap();

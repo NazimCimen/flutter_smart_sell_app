@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:sell_smart/app/config/localization/string_constants.dart';
 
 @immutable
 final class AppValidators {
@@ -14,10 +15,10 @@ final class AppValidators {
   /// Validates name and surname input with Turkish character support.
   static String? nameValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'StringConstants.validationNameRequired';
+      return StringConstants.validationNameRequired;
     }
     if (!RegExp(nameRegExp).hasMatch(value)) {
-      return 'StringConstants.validationNameInvalid';
+      return StringConstants.validationNameInvalid;
     }
     return null;
   }
@@ -25,10 +26,10 @@ final class AppValidators {
   /// Validates email address format using regex pattern.
   static String? emailValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'StringConstants.validationEmailRequired';
+      return StringConstants.validationEmailRequired;
     }
     if (!RegExp(emailRegExp).hasMatch(value)) {
-      return 'StringConstants.validationEmailInvalid';
+      return StringConstants.validationEmailInvalid;
     }
     return null;
   }
@@ -36,9 +37,9 @@ final class AppValidators {
   /// Validates password with minimum length requirement.
   static String? passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return 'StringConstants.validationPasswordRequired';
+      return StringConstants.validationPasswordRequired;
     } else if (value.length < 6) {
-      return 'StringConstants.validationPasswordMinLength';
+      return StringConstants.validationPasswordMinLength;
     } else {
       return null;
     }
@@ -47,10 +48,10 @@ final class AppValidators {
   /// Validates phone number with basic numeric length constraints.
   static String? phoneValidator(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return 'StringConstants.validationPhoneRequired';
+      return StringConstants.validationPhoneRequired;
     }
     if (!RegExp(phoneRegExp).hasMatch(value)) {
-      return 'StringConstants.validationPhoneInvalid';
+      return StringConstants.validationPhoneInvalid;
     }
     return null;
   }

@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sell_smart/app/common/widgets/custom_button.dart';
 import 'package:sell_smart/app/config/routes/app_routes.dart';
+import 'package:sell_smart/app/repository/user_repository.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sell_smart/app/config/localization/string_constants.dart';
 import 'package:sell_smart/core/utils/app_validators.dart';
 import 'package:sell_smart/core/utils/enum/image_enum.dart';
 import 'package:sell_smart/core/utils/size/constant_size.dart';
 import 'package:sell_smart/feature/auth/bloc/auth_cubit.dart';
+import 'package:sell_smart/core/init/di_container.dart';
 import 'package:sell_smart/app/repository/auth_repository.dart';
 import 'package:sell_smart/feature/auth/mixin/signup_mixin.dart';
 import 'package:sell_smart/feature/auth/widgets/auth_with_other_provider.dart';
@@ -26,7 +29,10 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AuthCubit(authRepository: DummyAuthRepository()),
+      create: (_) => AuthCubit(
+        authRepository: getIt<AuthRepository>(),
+        userRepository: getIt<UserRepository>(),
+      ),
       child: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthFailure) {
@@ -37,8 +43,8 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
           if (state is AuthSuccess) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(const SnackBar(content: Text('Giriş başarılı')));
-            context.go(AppRoutes.login);
+            ).showSnackBar(const SnackBar(content: Text('Kayıt başarılı')));
+            context.go(AppRoutes.home);
           }
         },
         builder: (context, state) {
@@ -68,18 +74,18 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               // Signup title
-                              const Header(
-                                title: 'Merhaba',
-                                subtitle: 'SmartSelle Hoşgeldiniz',
+                              Header(
+                                title: StringConstants.authSignupTitle,
+                                subtitle: StringConstants.authSignupSubtitle,
                               ),
-                              SizedBox(height: context.cXLargeValue * 1.5),
+                              SizedBox(height: context.cXLargeValue),
 
                               // Full Name input field
                               CustomTextFormField(
                                 controller: fullNameController,
                                 validator: (value) =>
                                     AppValidators.nameValidator(value),
-                                hintText: 'İsim Soyisim',
+                                hintText: StringConstants.fullName,
                                 prefixIconPath:
                                     ImageEnums.ic_nameSurname.toPathPng,
                                 keyboardType: TextInputType.name,
@@ -93,7 +99,7 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
                                 controller: phoneController,
                                 validator: (value) =>
                                     AppValidators.phoneValidator(value),
-                                hintText: 'Telefon Numarası',
+                                hintText: StringConstants.phoneNumber,
                                 prefixIconPath:
                                     ImageEnums.ic_nameSurname.toPathPng,
                                 keyboardType: TextInputType.phone,
@@ -107,7 +113,7 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
                                 controller: emailController,
                                 validator: (value) =>
                                     AppValidators.emailValidator(value),
-                                hintText: 'Email',
+                                hintText: StringConstants.email,
                                 prefixIconPath: ImageEnums.ic_email.toPathPng,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.next,
@@ -116,24 +122,28 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
                               SizedBox(height: context.cMediumValue),
 
                               // Password input field
-                              CustomPasswordTextField(
-                                controller: passwordController,
-                                hintText: 'Şifre',
-                                obsecureText: obscure,
-                                changeObsecureText: () =>
-                                    setState(() => obscure = !obscure),
+                              ValueListenableBuilder<bool>(
+                                valueListenable: obscureListenable,
+                                builder: (context, isObscure, _) {
+                                  return CustomPasswordTextField(
+                                    controller: passwordController,
+                                    hintText: StringConstants.password,
+                                    obsecureText: isObscure,
+                                    changeObsecureText: changeObsecureText,
+                                  );
+                                },
                               ),
 
                               SizedBox(height: context.cMediumValue),
-                              
+
                               // Signup button
                               CustomButtonWidget(
-                                onPressed: validateForm,
-                                text: 'Kayıt Ol',
+                                onPressed: () => signUp(context),
+                                text: StringConstants.signup,
                                 isRequestAvaliable: state is AuthLoading,
                               ),
 
-                              SizedBox(height: context.cXLargeValue * 1.5),
+                              SizedBox(height: context.cXLargeValue),
 
                               // Social media login buttons
                               AuthWithOtherProvider(
@@ -142,12 +152,12 @@ class _SignupViewState extends State<SignupView> with SignupMixin {
                                 onFacebookTap: onTapFacebook,
                               ),
 
-                              SizedBox(height: context.cXLargeValue * 1.5),
+                              SizedBox(height: context.cXLargeValue),
 
                               // Sign up link
                               Footer(
-                                text: 'Hesabınız var mı? ',
-                                linkText: 'Giriş Yap',
+                                text: StringConstants.haveAccount,
+                                linkText: StringConstants.goToLogin,
                                 onTap: () {
                                   context.go(AppRoutes.login);
                                 },

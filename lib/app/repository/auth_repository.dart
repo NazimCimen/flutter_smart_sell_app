@@ -1,11 +1,18 @@
 import 'package:flutter/foundation.dart';
+import 'package:dartz/dartz.dart';
+import 'package:sell_smart/app/service/auth_service.dart';
+import 'package:sell_smart/core/error/failure.dart';
+import 'package:sell_smart/app/models/user_model.dart';
 
 /// Abstraction for authentication data operations.
 @immutable
 abstract class AuthRepository {
-  Future<void> login({required String email, required String password});
+  Future<Either<Failure, void>> login({
+    required String email,
+    required String password,
+  });
 
-  Future<void> signup({
+  Future<Either<Failure, UserModel>> signup({
     required String fullName,
     required String phone,
     required String email,
@@ -13,28 +20,31 @@ abstract class AuthRepository {
   });
 }
 
-/// Temporary in-memory implementation to keep the app functional.
-/// Replace this with your real service-backed implementation.
-final class DummyAuthRepository implements AuthRepository {
+/// Repository implementation that delegates to injected AuthService
+final class AuthRepositoryImpl implements AuthRepository {
+  final AuthService _service;
+  AuthRepositoryImpl({required AuthService service}) : _service = service;
+
   @override
-  Future<void> login({required String email, required String password}) async {
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-    final bool ok = email.isNotEmpty && password.length >= 6;
-    if (!ok) throw Exception('Email veya şifre geçersiz.');
+  Future<Either<Failure, void>> login({
+    required String email,
+    required String password,
+  }) async {
+    return _service.login(email: email, password: password);
   }
 
   @override
-  Future<void> signup({
+  Future<Either<Failure, UserModel>> signup({
     required String fullName,
     required String phone,
     required String email,
     required String password,
   }) async {
-    await Future<void>.delayed(const Duration(milliseconds: 1000));
-    final bool ok =
-        fullName.trim().length >= 2 && phone.trim().length >= 10 && email.isNotEmpty && password.length >= 6;
-    if (!ok) throw Exception('Kayıt bilgileri geçersiz.');
+    return _service.signup(
+      email: email,
+      password: password,
+      fullName: fullName,
+      phone: phone,
+    );
   }
 }
-
-

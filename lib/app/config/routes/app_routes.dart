@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sell_smart/feature/auth/view/login_view.dart';
 import 'package:sell_smart/feature/auth/view/signup_view.dart';
 import 'package:sell_smart/feature/splash/splash_view.dart';
+import 'package:sell_smart/feature/home/home_view.dart';
 
 /// Centralized GoRouter configuration
 final class AppRoutes {
@@ -12,6 +13,7 @@ final class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
   static const String signup = '/signup';
+  static const String home = '/home';
 
   static GoRouter router = GoRouter(
     initialLocation: login,
@@ -30,6 +32,11 @@ final class AppRoutes {
         path: signup,
         name: 'signup',
         builder: (BuildContext context, GoRouterState state) => const SignupView(),
+      ),
+      GoRoute(
+        path: home,
+        name: 'home',
+        builder: (BuildContext context, GoRouterState state) => const HomeView(),
       ),
     ],
   );

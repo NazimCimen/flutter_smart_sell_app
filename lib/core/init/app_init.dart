@@ -1,12 +1,14 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sell_smart/app/config/localization/locale_constants.dart';
 import 'package:sell_smart/app/config/theme/theme_manager.dart';
-import 'package:device_preview/device_preview.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:sell_smart/main.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:sell_smart/core/init/di_container.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class AppInit {
   Future<void> initialize();
@@ -40,12 +42,8 @@ class AppInitImpl extends AppInit {
           ChangeNotifierProvider<ThemeManager>(
             create: (context) => ThemeManager(),
           ),
-        
         ],
-        child: DevicePreview(
-          enabled: false,
-          builder: (context) => const MyApp(),
-        ),
+        child: const MyApp(),
       ),
     );
   }
@@ -59,11 +57,16 @@ class AppInitImpl extends AppInit {
     ]);
     await EasyLocalization.ensureInitialized();
     await Hive.initFlutter();
-   // setupDI();
-   
+    await dotenv.load(fileName: '.env');
+
+    await Supabase.initialize(
+      url: dotenv.env['SUPABASE_URL']!,
+      anonKey: dotenv.env['SUPABASE_KEY']!,
+    );
+    setupDI();
     await ThemeManager().loadTheme();
-   /// await getIt<PermissionService>().requestNotificationPermission();
-  //  await getIt<LocalNotificationService>().initialize();
+    // await getIt<PermissionService>().requestNotificationPermission();
+    //  await getIt<LocalNotificationService>().initialize();
   }
 
   @override
